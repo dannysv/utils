@@ -10,14 +10,9 @@ from xml.etree.ElementTree import ElementTree, Element, SubElement, Comment, tos
 
 from bs4 import BeautifulSoup
 
-# Error report
-def error_message(e):
-    print('error in %s'%str(os.path.dirname(os.path.abspath(__file__)))+'/'+str(__file__) )
-    print('\tdetails ... %s' %str(e)[:120])
-    print('falta retornar la linea donde ocurrio el problema')
-
-# IO functions
-def read_pick(path):
+# IO FUNCTIONS
+## Read serialize object with pickle
+def read_pick(path): 
     try:
         f = open(path, 'rb')
         data = pickle.load(f)
@@ -27,12 +22,14 @@ def read_pick(path):
         error_message(e)
         return None
 
-def save_pick(path, data):
+## Write object as serialized file pickle
+def write_pick(path, data): 
     f=open(path, 'wb') 
     pickle.dump(data, f)
     f.close()
 
-def read_txt(path):
+## Read txt file by using the defaul encoding=utf-8
+def read_txt(path): 
     try:
         with open(path, 'r') as f:
             lines = f.readlines()
@@ -42,8 +39,8 @@ def read_txt(path):
         error_message(e)
         return None
 
-#function to read file with one of two available encodings
-def read_file(path):
+## Read txtfile with one of two available encodings - util for portuguese
+def read_txt_pt(path):
     try:
         with codecs.open(path, 'r', encoding="utf-8") as f:
             resp = f.readlines()
@@ -64,6 +61,16 @@ def read_file(path):
             print(e)
             return None 
 
+## Write txt file default case (utf-8)
+def write_txt(path, lines):
+    with open(path, 'w') as f:
+        for item in lines:
+            f.write("%s\n"%item)
+    f.close()
+    print('saved in %s'%path)
+
+
+## Read json file 
 def read_json(path):
     try:
         with open(path, 'r') as f:
@@ -72,27 +79,14 @@ def read_json(path):
     except Exception as e:
         return None 
 
-def save_txt(path, lines):
-    with open(path, 'w') as f:
-        for item in lines:
-            f.write("%s\n"%item)
-    f.close()
-    print('saved in %s'%path)
-
-def save_xml(path, str_xml):
+## Write object as xml file
+def write_xml(path, str_xml):
     out = codecs.open(path, 'w')
     out.writelines(str_xml)
     out.close()
     print('saved in %s'%path)
 
-## strings
-def find_matchpositions(line, subline):
-    matches = re.finditer(subline, line)
-    matches_positions = [match.start() for match in matches]
-    return matches_positions 
-
-
-#read xml and if bs return xml else txt
+## Read xml file as str-object or beautifulsoup file(bs = True)
 def read_xml(path, bs):
     try:
         content = []
@@ -108,7 +102,8 @@ def read_xml(path, bs):
         error_message(e)
         return None
 
-def save_xml(path, root):
+## Write xml file 
+def write_xml(path, root):
     try:
         with open(path, 'w') as f:
             f.writelines(root)
@@ -117,23 +112,7 @@ def save_xml(path, root):
     except Exception as e:
         error_message(e)
 
-def query_yes_no(question):
-    try:
-        valid = {"y":True, "n": False}
-        prompt = " [y/n] "
-        while True:
-            sys.stdout.write(question + prompt)
-            choice = input().lower()
-            if choice=='':
-                return valid['no']
-            elif choice in valid:
-                return valid[choice]
-            else:
-                sys.stdout.write("Por favor, responda com 'yes'  ou 'no'"
-                                 "(or 'y' or 'n')")
-    except Exception as e:
-        error_message(e)
-
+## Remove all files of a given path
 def removeall(path):
     try:
         if path != "":
@@ -146,6 +125,7 @@ def removeall(path):
     except Exception as e:
         error_message(e)
 
+## Remove all files asking for confirmation
 def removefiles(path):
     try:
         resp = query_yes_no('tem certeza de apagar os arquivos em : %s'%path)
@@ -157,7 +137,23 @@ def removefiles(path):
     except Exception as e:
         error_message(e)
 
-#xml --> search the tag in content 
+# LISTAS, STRINGS, MISCELLANEOUS
+## For a given list of lists, return the non-none ones
+def novazios(listas):
+    try:
+        lens = [(i, len(l)) for i,l in enumerate(listas) if l is not None]
+        return lens
+    except Exception as e:
+        error_message(e)
+        return None 
+
+## Find match positions of substring in a given string
+def find_matchpositions(line, subline):
+    matches = re.finditer(subline, line)
+    matches_positions = [match.start() for match in matches]
+    return matches_positions 
+
+## xml --> search the tag in content 
 def get_xmltag(content, bs, tag):
     try:
         if bs:
@@ -189,11 +185,30 @@ def get_xmlattribute(bscontent, attribute):
         #error_message(e)
         return None 
 
-#Micellaneous
-def novazios(listas):
+
+# INTERACTIVE
+## Interactive pronpt to select two options (y, n)
+def query_yes_no(question):
     try:
-        lens = [(i, len(l)) for i,l in enumerate(listas) if l is not None]
-        return lens
+        valid = {"y":True, "n": False}
+        prompt = " [y/n] "
+        while True:
+            sys.stdout.write(question + prompt)
+            choice = input().lower()
+            if choice=='':
+                return valid['no']
+            elif choice in valid:
+                return valid[choice]
+            else:
+                sys.stdout.write("Por favor, responda com 'yes'  ou 'no'"
+                                 "(or 'y' or 'n')")
     except Exception as e:
         error_message(e)
-        return None 
+
+# ERROR HANDLING
+## Error report
+def error_message(e):
+    print('error in %s'%str(os.path.dirname(os.path.abspath(__file__)))+'/'+str(__file__) )
+    #print('\tdetails ... %s' %str(e)[:120])
+    print('\tdetails ... %s' %str(e))
+    #print('falta retornar la linea donde ocurrio el problema')
