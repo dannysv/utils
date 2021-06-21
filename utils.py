@@ -54,7 +54,9 @@ def split_folder(folder, itemspersub):
 	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
 	    print(cmd)
 	    os.system(cmd)
-    print('The folder %s, was split into %i subfolders'%(folder, partes+1))
+        print('The folder %s, was split into %i subfolders'%(folder, partes+1))
+    else:
+        print('The folder %s, was split into %i subfolders'%(folder, partes))
 
 
 ## Read serialize object with pickle
