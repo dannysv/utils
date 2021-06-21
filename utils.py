@@ -31,29 +31,29 @@ def split_folder(folder, itemspersub):
     partes = n//number
     #print(partes)
     for part in range(partes):
-	print("limites -> %i : %i", (part*number,(part+1)*number))
-	if os.path.exists('part'+str(part))== False:
-	    print('crear carpeta')
-	    os.mkdir('part'+str(part))
-	#mover los part 200
-	for i in range(part*number,(part+1)*number):
-	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
-	    print(cmd)
-	    os.system(cmd)
-
+        print("limites -> %i : %i", (part*number,(part+1)*number))
+        if os.path.exists('part'+str(part))== False:
+            print('crear carpeta')
+            os.mkdir('part'+str(part))
+            #mover los part 200
+            for i in range(part*number,(part+1)*number):
+                cmd = 'cp '+os.path.join(folder,files[i]) + ' '+ 'part'+str(part) + "/"
+                print(cmd)
+                os.system(cmd)
+    
     if n%number>0:
-	part=part+1
-	print('resto')
-	print("limites -> %i : %i", (part*number,(part+1)*number))
-	print(n)
-	if os.path.exists('part'+str(part))== False:
-	    print('crear carpeta')
-	    os.mkdir('part'+str(part))
+        part=part+1
+        print('resto')
+        print("limites -> %i : %i", (part*number,(part+1)*number))
+        print(n)
+        if os.path.exists('part'+str(part))== False:
+            print('crear carpeta')
+            os.mkdir('part'+str(part))
 	#mover los part 200
-	for i in range(part*number,n):
-	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
-	    print(cmd)
-	    os.system(cmd)
+        for i in range(part*number,n):
+            cmd = 'cp '+ os.path.join(folder, files[i]) + ' '+ 'part'+str(part) + "/"
+            print(cmd)
+            os.system(cmd)
         print('The folder %s, was split into %i subfolders'%(folder, partes+1))
     else:
         print('The folder %s, was split into %i subfolders'%(folder, partes))
