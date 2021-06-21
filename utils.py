@@ -21,6 +21,42 @@ def create_folder(path):
             print('succesfully created : %s'%path)
     except Exception as e:
         error_message(e)
+
+# split folder in subfolders of size k
+def split_folder(folder, itemspersub):
+    number = itemspersub
+    files = os.listdir(folder)
+    files = [f for f in files if str(f).endswith('.txt')]
+    n = len(files)
+    partes = n//number
+    #print(partes)
+    for part in range(partes):
+	print("limites -> %i : %i", (part*number,(part+1)*number))
+	if os.path.exists('part'+str(part))== False:
+	    print('crear carpeta')
+	    os.mkdir('part'+str(part))
+	#mover los part 200
+	for i in range(part*number,(part+1)*number):
+	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
+	    print(cmd)
+	    os.system(cmd)
+
+    if n%number>0:
+	part=part+1
+	print('resto')
+	print("limites -> %i : %i", (part*number,(part+1)*number))
+	print(n)
+	if os.path.exists('part'+str(part))== False:
+	    print('crear carpeta')
+	    os.mkdir('part'+str(part))
+	#mover los part 200
+	for i in range(part*number,n):
+	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
+	    print(cmd)
+	    os.system(cmd)
+    print('The folder %s, was split into %i subfolders'%(folder, partes+1))
+
+
 ## Read serialize object with pickle
 def read_pick(path): 
     try:
@@ -235,36 +271,4 @@ def error_message(e):
     #print('falta retornar la linea donde ocurrio el problema')
 
 
-# split folder in subfolders of size k
-def split_folder(folder, itemspersub):
-    number = itemspersub
-    files = os.listdir(folder)
-    files = [f for f in files if str(f).endswith('.txt')]
-    n = len(files)
-    partes = n//number
-    #print(partes)
-    for part in range(partes):
-	print("limites -> %i : %i", (part*number,(part+1)*number))
-	if os.path.exists('part'+str(part))== False:
-	    print('crear carpeta')
-	    os.mkdir('part'+str(part))
-	#mover los part 200
-	for i in range(part*number,(part+1)*number):
-	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
-	    print(cmd)
-	    os.system(cmd)
-
-    if n%number>0:
-	part=part+1
-	print('resto')
-	print("limites -> %i : %i", (part*number,(part+1)*number))
-	print(n)
-	if os.path.exists('part'+str(part))== False:
-	    print('crear carpeta')
-	    os.mkdir('part'+str(part))
-	#mover los part 200
-	for i in range(part*number,n):
-	    cmd = 'cp '+files[i] + ' '+ 'part'+str(part) + "/"
-	    print(cmd)
-	    os.system(cmd)
 
