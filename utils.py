@@ -11,6 +11,16 @@ from xml.etree.ElementTree import ElementTree, Element, SubElement, Comment, tos
 from bs4 import BeautifulSoup
 
 # IO FUNCTIONS
+## create folder if not existis
+def create_folder(path):
+    try:
+        if os.path.exists(path):
+            print('exists : %s'%path)
+        else:
+            os.mkdir(path) 
+            print('succesfully created : %s'%path)
+    except Exception as e:
+        error_message(e)
 ## Read serialize object with pickle
 def read_pick(path): 
     try:
@@ -77,7 +87,18 @@ def read_json(path):
             rdict = json.load(f)
         return rdict 
     except Exception as e:
-        return None 
+        return None
+ 
+# Write json file
+def write_json(path, data):
+    try: 
+        with open(path, 'w') as f:
+            json.dump(data, f, indent=4, sort_keys=True)
+        f.close()
+        print('saved in %s'%path)
+    except Exception as e:
+        return None
+        error_message(e)
 
 ## Write object as xml file
 def write_xml(path, str_xml):
