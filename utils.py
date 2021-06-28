@@ -23,10 +23,10 @@ def create_folder(path):
         error_message(e)
 
 # split folder in subfolders of size k
-def split_folder(folder, itemspersub):
+def split_folder(folder, itemspersub, extention):
     number = itemspersub
     files = os.listdir(folder)
-    files = [f for f in files if str(f).endswith('.txt')]
+    files = [f for f in files if str(f).endswith('.'+extention)]
     n = len(files)
     partes = n//number
     #print(partes)
