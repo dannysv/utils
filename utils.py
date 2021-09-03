@@ -9,6 +9,7 @@ import json
 from xml.etree.ElementTree import ElementTree, Element, SubElement, Comment, tostring 
 
 from bs4 import BeautifulSoup
+import requests
 
 # IO FUNCTIONS
 ## create folder if not existis
@@ -123,15 +124,16 @@ def read_json(path):
     try:
         with open(path, 'r') as f:
             rdict = json.load(f)
-        return rdict 
+        return (rdict, None)
     except Exception as e:
-        return None
+        return (None, e)
  
 # Write json file
 def write_json(path, data):
     try: 
         with open(path, 'w') as f:
-            json.dump(data, f, indent=4, sort_keys=True)
+            #json.dump(data, f, indent=4, sort_keys=True)
+            json.dump(data, f, indent=4)
         f.close()
         print('saved in %s'%path)
     except Exception as e:
@@ -212,7 +214,36 @@ def find_matchpositions(line, subline):
     matches_positions = [match.start() for match in matches]
     return matches_positions 
 
-## xml --> search the tag in content 
+
+# INTERACTIVE
+## Interactive pronpt to select two options (y, n)
+def query_yes_no(question):
+    try:
+        valid = {"y":True, "n": False}
+        prompt = " [y/n] "
+        while True:
+            sys.stdout.write(question + prompt)
+            choice = input().lower()
+            if choice=='':
+                return valid['no']
+            elif choice in valid:
+                return valid[choice]
+            else:
+                sys.stdout.write("Por favor, responda com 'yes'  ou 'no'"
+                                 "(or 'y' or 'n')")
+    except Exception as e:
+        error_message(e)
+
+# ERROR HANDLING
+## Error report
+def error_message(e):
+    print('error in %s'%str(os.path.dirname(os.path.abspath(__file__)))+'/'+str(__file__) )
+    #print('\tdetails ... %s' %str(e)[:120])
+    print('\tdetails ... %s' %str(e))
+    #print('falta retornar la linea donde ocurrio el problema')
+
+
+## xml and html --> search the tag in content 
 def get_xmltag(content, bs, tag):
     try:
         if bs:
@@ -245,32 +276,22 @@ def get_xmlattribute(bscontent, attribute):
         return None 
 
 
-# INTERACTIVE
-## Interactive pronpt to select two options (y, n)
-def query_yes_no(question):
+# request link by using requests lib
+def get_link(link, timeout):
     try:
-        valid = {"y":True, "n": False}
-        prompt = " [y/n] "
-        while True:
-            sys.stdout.write(question + prompt)
-            choice = input().lower()
-            if choice=='':
-                return valid['no']
-            elif choice in valid:
-                return valid[choice]
-            else:
-                sys.stdout.write("Por favor, responda com 'yes'  ou 'no'"
-                                 "(or 'y' or 'n')")
+        resp_link = requests.get(link, timeout=timeout)
+        return (resp_link, None)
     except Exception as e:
-        error_message(e)
+        return (None, e)
 
-# ERROR HANDLING
-## Error report
-def error_message(e):
-    print('error in %s'%str(os.path.dirname(os.path.abspath(__file__)))+'/'+str(__file__) )
-    #print('\tdetails ... %s' %str(e)[:120])
-    print('\tdetails ... %s' %str(e))
-    #print('falta retornar la linea donde ocurrio el problema')
+# search exact match items
+def exactmatch_items(resp_requests, tag, attribute, value):
+    soup = BeautifulSoup(resp_requests.content)
+    items = soup.findAll(tag, {attribute:value})
+    return items
 
-
-
+# search exact match item
+def exactmatch_item(resp_requests, tag, attribute, value):
+    soup = BeautifulSoup(resp_requests.content)
+    item = soup.find(tag, {attribute:value})
+    return item 
