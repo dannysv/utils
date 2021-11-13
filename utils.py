@@ -114,7 +114,7 @@ def read_txt_pt(path):
 def write_txt(path, lines):
     with open(path, 'w') as f:
         for item in lines:
-            f.write("%s\n"%item)
+            f.write("%s\n"%item.replace('\n', ' '))
     f.close()
     print('saved in %s'%path)
 
